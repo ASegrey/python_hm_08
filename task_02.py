@@ -13,7 +13,8 @@
 человека)
 4. Использование функций. Ваша программа
 не должна быть линейной 
-
+5. Дополнить справочник возможностью копирования данных из одного файла в другой. 
+Пользователь вводит номер строки, которую необходимо перенести из одного файла в другой.
 """
 import os
 import re
@@ -22,6 +23,7 @@ def read_sprav():
     sprav = []
     file_path = 'tel_sprav.txt'
     if not os.path.isfile(file_path):
+        print(f"Создан файл справочника {file_path}")
         my_file = open("tel_sprav.txt", "w+", encoding='utf-8')
         my_file.close()
     tel_sprav = open(file_path, 'r', encoding='utf-8')
@@ -75,6 +77,32 @@ def find_last_name(last_name: str, my_sprav: list[dict[str, str]]=None):
             print(item)
 
 
+def copy_line(my_sprav):
+    file_path = input("Ведите название файла в который будет скопирован контакт (*.txt) -> ")
+    if not os.path.isfile(file_path):
+        print(f"Создан файл справочника {file_path}")
+        my_file = open(f"{file_path}", "w+", encoding='utf-8')
+        my_file.close()
+    while True:    
+        num_line = int(input("Введите номер строки (первая строка = 1) -> "))
+        if num_line != 0 :
+            break
+    count = 1
+    line_copy = ""
+    for item in my_sprav:
+        if num_line == count:
+            for v in item.values():
+                line_copy += v + " "
+        count += 1
+    if len(line_copy) > 0:
+        line_copy += "\n"
+        my_file = open(f"{file_path}", "a", encoding="utf-8")
+        my_file.write(f"{line_copy}")
+        my_file.close()
+        print(f"Номер  строки {num_line}, скопирован в {file_path} успешно")
+    else:
+        print(f"Номера строки {num_line} не существует")
+
 def main():
     # переменная = open ('название файла', 'режим работы', encoding='кодировка')
     while True:
@@ -82,6 +110,7 @@ def main():
         print("1: Вывести данные")
         print("2: Записать новый контакт")
         print("3: Найти контакт по фамилии")
+        print("4: Копировать контакт в другой файл по номеру строки")
         print("0: Выйти")
 
         x = input()
@@ -92,6 +121,8 @@ def main():
             add_contact()
         elif x == "3":
             find_last_name(input("Введите фамилию: "), my_sprav=tel_sprav)
+        elif x == "4":
+            copy_line(my_sprav=tel_sprav)
         elif x == "0":
             break
         else:
